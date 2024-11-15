@@ -1,0 +1,177 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #35424a;
+    color: white;
+}
+
+/* Navbar Styles */
+nav {
+    background-color: #1f2a38;
+    display: flex;
+    align-items: center; /* Center items vertically */
+    padding: 10px 20px; /* Padding around the nav */
+} 
+
+h1{
+    color: #ffffff;
+}
+
+nav .logo {
+    width: 60px; /* Adjust as needed */
+    margin-right: 15px;
+}
+
+nav .nav-links {
+    margin-left: auto; /* Push nav links to the right */
+    display: flex; /* Ensure the links are displayed in a row */
+}
+
+nav a {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 10px 15px;
+    margin: 0 5px;
+}
+
+nav a:hover {
+    background-color: #1abc9c;
+    border-radius: 4px;
+}
+
+/* General container styles */
+.container {
+    width: 80%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Hero section */
+.hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f4f4f4;
+    padding: 60px 0;
+}
+
+.hero .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.hero-image {
+    max-width: 50%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.hero-text {
+    max-width: 40%;
+}
+
+.hero-text h2 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+}
+
+.cta-button {
+    display: inline-block;
+    background-color: #28a745;
+    color: #fff;
+    padding: 15px 30px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    margin-top: 20px;
+}
+
+.cta-button:hover {
+    background-color: #218838;
+}
+
+/* Sections */
+section {
+    margin: 40px 0;
+}
+
+h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+/* Testimonials */
+blockquote {
+    font-style: italic;
+    margin-bottom: 20px;
+}
+
+blockquote cite {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+/* Reset some default browser styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Set up the basic layout */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensures the body takes up the full height of the viewport */
+}
+
+/* Main content area */
+main {
+    flex-grow: 1; /* Takes up available space, pushing footer to the bottom */
+}
+
+/* Style the footer */
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: auto; /* This ensures the footer is pushed to the bottom of the page */
+    width: 100%;
+}
+
+/* Styling for footer links */
+footer a {
+    color: #fff;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+

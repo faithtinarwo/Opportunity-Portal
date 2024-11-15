@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Listings</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <nav>
+            <h1>Opportunity Portal</h1>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/add_employer">Add Employer</a>
+                <a href="/add_job_listing">Add Job Listing</a>
+                <a href="/job_listings">Job Listings</a>
+                <a href="/candidates">Candidates</a>
+                <a href="/applications">Applications</a>
+                <a href="/status_updates">Status Updates</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <h2>List of Job Listings</h2>
+        {% if listings %}
+            <ul>
+                {% for listing in listings %}
+                <div class="job-listing">
+                    <h3>{{ listing.title }}</h3>
+                    <p>{{ listing.description }}</p>
+                    <p>Expires in: <span id="timer-{{ listing.id }}"></span></p>
+                    <form action="{{ url_for('delete_job_listing', id=listing.id) }}" method="post">
+                        <button type="submit">Delete Listing</button>
+                    </form>
+                </div>
+                <script>
+                    // Countdown timer script
+                    const expirationDate = new Date("{{ listing.expiration_date.strftime('%Y-%m-%d %H:%M:%S') }}").getTime();
+                    const timerElement = document.getElementById("timer-{{ listing.id }}");
+
+                    setInterval(() => {
+                        const now = new Date().getTime();
+                        const timeLeft = expirationDate - now;
+
+                        if (timeLeft < 0) {
+                            timerElement.innerHTML = "Expired";
+                        } else {
+                            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
+                            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                            timerElement.innerHTML = `${days}d ${hours}h ${minutes}m`;
+                        }
+                    }, 1000);
+                </script>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No job listings available at this time.</p>
+        {% endif %}
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Opportunity Portal</p>
+    </footer>
+</body>
+</html>

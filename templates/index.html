@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opportunity Portal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <nav>
+            <h1>Opportunity Portal</h1>
+            <div class="nav-links">
+                <a href="/">Home</a>
+                <a href="/add_employer">Add Employer</a>
+                <a href="/add_job_listing">Add Job Listing</a>
+                <a href="/job_listings">Job Listings</a>
+                <a href="/candidates">Candidates</a>
+                <a href="/applications">Applications</a>
+                <a href="/status_updates">Status Updates</a>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <img src="{{ url_for('static', filename='images/hero-image.jpg') }}" alt="Hero Image" class="hero-image">
+            <div class="hero-text">
+                <h2>Connecting Job Seekers with Employers</h2>
+                <p>Welcome to the Opportunity Portal, where you can explore job listings, connect with potential employers, and manage your job applications efficiently.</p>
+                <a href="/add_job_listing" class="cta-button">Get Started</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Section -->
+    <main>
+        <!-- About Section -->
+        <section id="about" class="container">
+            <h2>About Us</h2>
+            <p>At Opportunity Portal, we strive to bridge the gap between job seekers and employers. Our platform provides a seamless experience for both parties, enabling job seekers to find the right opportunities and employers to discover the best candidates.</p>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="container">
+            <h2>Features</h2>
+            <ul>
+                <li>Easy job listing submissions</li>
+                <li>Comprehensive candidate profiles</li>
+                <li>Application tracking</li>
+                <li>Real-time status updates</li>
+            </ul>
+        </section>
+
+        <!-- Social Proof Section -->
+        <section id="testimonials" class="container">
+            <h2>What Our Users Say</h2>
+            <blockquote>
+                <p>"The Opportunity Portal helped me find the perfect candidate for our company. The platform is easy to use, and the process was seamless!"</p>
+                <cite>- John Doe, Employer</cite>
+            </blockquote>
+            <blockquote>
+                <p>"I found my dream job through this platform. It's a game-changer for job seekers!"</p>
+                <cite>- Jane Smith, Job Seeker</cite>
+            </blockquote>
+        </section>
+
+        <!-- Call to Action Section -->
+        <section id="cta-section" class="container">
+            <h2>Ready to Get Started?</h2>
+            <p>Sign up today to post your job listings or explore career opportunities!</p>
+            <a href="/add_job_listing" class="cta-button">Get Started</a>
+        </section>
+    </main>
+
+    <!-- Footer Section -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Opportunity Portal | <a href="/privacy">Privacy Policy</a> | <a href="/terms">Terms of Service</a></p>
+        </div>
+    </footer>
+</body>
+</html>
+
