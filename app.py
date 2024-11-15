@@ -1,20 +1,25 @@
+import os
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from datetime import datetime, timedelta, timezone
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Initialize the Flask application
 app = Flask(__name__)
 
-# Database configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:$Shekinah1@localhost/opportunity_portal'
+# Database configuration using environment variables
+app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://root:{os.getenv('DB_PASSWORD')}@localhost/opportunity_portal"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize the database and migration
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# Models definition directly in this file
+# Models definition
 class Employer(db.Model):
     __tablename__ = 'employer'
     id = db.Column(db.Integer, primary_key=True)
@@ -74,11 +79,9 @@ def add_employer():
     
     return render_template('add_employer.html')  # Render the employer form
 
-
 @app.route('/add_job_listing', methods=['GET', 'POST'])
 def add_job_listing():
     if request.method == 'POST':
-        print("Form keys:", request.form.keys())  # This should show 'employer_id' among the keys
         title = request.form.get('title')
         description = request.form.get('description')
         employer_id = request.form.get('employer_id')
@@ -94,7 +97,6 @@ def add_job_listing():
     employers = Employer.query.all()
     return render_template('add_job_listing.html', employers=employers)
 
-    
 # Route for viewing job listings
 @app.route('/job_listings')
 def job_listings():
@@ -144,17 +146,15 @@ def status_updates():
     # Logic to fetch and display status updates (can be customized)
     return render_template('status_updates.html')
 
+# Test the database connection
 from sqlalchemy import text
-
 @app.route('/test_connection')
 def test_connection():
     try:
-        # Attempt to query the database
         result = db.session.execute(text('SELECT 1'))
         return "Database connection is successful!"
     except Exception as e:
         return f"Database connection failed: {str(e)}"
-
 
 # Start the Flask application
 if __name__ == '__main__':
