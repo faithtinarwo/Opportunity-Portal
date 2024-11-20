@@ -1,3 +1,11 @@
+# Python ignores
+*.pyc
+*.pyo
+__pycache__/
+
+# Environment variables
 .env
-config.py
-venv
+
+# Flask cache and session
+instance/
+*.sqlite

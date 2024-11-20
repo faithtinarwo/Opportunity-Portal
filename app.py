@@ -1,101 +1,117 @@
-import os
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from datetime import datetime, timedelta, timezone
-from dotenv import load_dotenv
 
-# Load environment variables from .env file
-load_dotenv()
 
-# Initialize the Flask application
 app = Flask(__name__)
-
-# Database configuration using environment variables
-app.config['SQLALCHEMY_DATABASE_URI'] = f"mysql+pymysql://root:{os.getenv('DB_PASSWORD')}@localhost/opportunity_portal"
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jobs.db'  # Change this to MySQL or PostgreSQL as needed
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# Initialize the database and migration
 db = SQLAlchemy(app)
+
 migrate = Migrate(app, db)
 
-# Models definition
+# Models
 class Employer(db.Model):
-    __tablename__ = 'employer'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    job_listings = db.relationship('JobListing', backref='employer', lazy=True)
+    email = db.Column(db.String(100), nullable=True)
 
     def __repr__(self):
-        return f'<Employer {self.name}>'
+        return f"<Employer {self.name}>"
+
+from datetime import datetime
 
 class JobListing(db.Model):
-    __tablename__ = 'job_listing'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=False)
     employer_id = db.Column(db.Integer, db.ForeignKey('employer.id'), nullable=False)
-    expiration_date = db.Column(db.DateTime, default=datetime.now(timezone.utc) + timedelta(days=7))
+
+    employer = db.relationship('Employer', backref=db.backref('job_listings', lazy=True))
 
     def __repr__(self):
         return f'<JobListing {self.title}>'
 
 class Candidate(db.Model):
-    __tablename__ = 'candidates'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
-    applications = db.relationship('Application', backref='candidate', lazy=True)
+    resume = db.Column(db.String(100), nullable=False)
 
-    def __repr__(self):
-        return f'<Candidate {self.name}>'
+class StatusUpdate(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    status = db.Column(db.String(100), nullable=False)
+    job_listing_id = db.Column(db.Integer, db.ForeignKey('job_listing.id'), nullable=False)
+    job_listing = db.relationship('JobListing', backref='status_updates')
 
-class Application(db.Model):
-    __tablename__ = 'applications'
-    application_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    candidate_id = db.Column(db.Integer, db.ForeignKey('candidates.id'), nullable=False)
-    job_id = db.Column(db.Integer, db.ForeignKey('job_listing.id'), nullable=False)
-    application_date = db.Column(db.DateTime, default=datetime.now(timezone.utc))
-    status = db.Column(db.String(20), default='applied')
 
-    def __repr__(self):
-        return f'<Application {self.application_id} for Job {self.job_id}>'
-
-# Route for the home page
+# Routes
 @app.route('/')
-def home():
+def index():
     return render_template('index.html')
 
 @app.route('/add_employer', methods=['GET', 'POST'])
 def add_employer():
     if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        new_employer = Employer(name=name, email=email)
+        employer_name = request.form['employer_name']
+        employer_email = request.form['employer_email']
+
+        # Check if the employer already exists in the database
+        existing_employer = Employer.query.filter_by(email=employer_email).first()
+        if existing_employer:
+            flash('Employer with this email already exists', 'error')
+            return redirect(url_for('add_employer'))
+
+        # Create and add the new employer
+        new_employer = Employer(name=employer_name, email=employer_email)
         db.session.add(new_employer)
         db.session.commit()
-        return redirect(url_for('job_listings'))  # Redirect to job listings page or any other page
-    
-    return render_template('add_employer.html')  # Render the employer form
+
+        flash('Employer added successfully', 'success')
+        return redirect(url_for('add_job_listing'))  # Redirect to add job listing page
+
+    return render_template('add_employer.html')
+
 
 @app.route('/add_job_listing', methods=['GET', 'POST'])
 def add_job_listing():
     if request.method == 'POST':
         title = request.form.get('title')
         description = request.form.get('description')
-        employer_id = request.form.get('employer_id')
-        
-        if not employer_id:
-            return "Employer ID is missing", 400
-        
-        new_job_listing = JobListing(title=title, description=description, employer_id=employer_id)
-        db.session.add(new_job_listing)
-        db.session.commit()
-        return redirect(url_for('job_listings'))
-    
+        employer_id = request.form.get('employer_id')  # Get the employer_id from the form
+
+        # Example validation logic (make sure all fields are provided)
+        if title and description and employer_id:
+            employer = Employer.query.get(employer_id)  # Fetch employer by ID
+            if employer:
+                new_job = JobListing(title=title, description=description, employer_id=employer.id)
+                db.session.add(new_job)
+                db.session.commit()
+                message = "Job listing added successfully!"
+            else:
+                message = "Employer not found."
+        else:
+            message = "Please fill in all fields."
+
+        return render_template('add_job_listing.html', message=message)
+
+    # Retrieve all employers to show in the dropdown
     employers = Employer.query.all()
     return render_template('add_job_listing.html', employers=employers)
+
+
+@app.route('/delete_job_listing/<int:id>', methods=['POST'])
+def delete_job_listing(id):
+    job_listing = JobListing.query.get(id)
+    if job_listing:
+        db.session.delete(job_listing)
+        db.session.commit()
+        return redirect(url_for('job_listings'))  # Redirect to the job listings page
+    return "Job listing not found", 404
+
+@app.route('/candidates')
+def candidates():
+    candidates = Candidate.query.all()
+    return render_template('candidates.html', candidates=candidates)
 
 # Route for viewing job listings
 @app.route('/job_listings')
@@ -103,60 +119,14 @@ def job_listings():
     listings = JobListing.query.all()
     return render_template('job_listings.html', listings=listings)
 
-# Route for deleting a job listing
-@app.route('/delete_job_listing/<int:id>', methods=['POST'])
-def delete_job_listing(id):
-    job_listing = JobListing.query.get(id)
-    if job_listing:
-        db.session.delete(job_listing)
-        db.session.commit()
-        return redirect(url_for('job_listings'))
-    return "Job listing not found", 404
-
-# Route for candidates
-@app.route('/candidates')
-def candidates():
-    candidates = Candidate.query.all()
-    return render_template('candidates.html', candidates=candidates)
-
-# Route for viewing applications
-@app.route('/applications')
-def applications():
-    all_applications = Application.query.all()
-    return render_template('applications.html', applications=all_applications)
-
-# Route for searching job listings
-@app.route('/search', methods=['GET'])
-def search():
-    query = request.args.get('query')
-    results = JobListing.query.filter(JobListing.title.contains(query)).all()
-    return render_template('search_results.html', results=results)
-
-# Route for viewing a specific application by ID
-@app.route('/applications/<int:id>')
-def view_application(id):
-    application = Application.query.get(id)
-    if application is None:
-        return "Application not found", 404
-    return render_template('view_application.html', application=application)
-
-# Route for status updates (add this to prevent 404 errors)
 @app.route('/status_updates')
 def status_updates():
-    # Logic to fetch and display status updates (can be customized)
-    return render_template('status_updates.html')
+    status_updates = StatusUpdate.query.all()
+    return render_template('status_updates.html', status_updates=status_updates)
 
-# Test the database connection
-from sqlalchemy import text
-@app.route('/test_connection')
-def test_connection():
-    try:
-        result = db.session.execute(text('SELECT 1'))
-        return "Database connection is successful!"
-    except Exception as e:
-        return f"Database connection failed: {str(e)}"
 
-# Start the Flask application
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # Default to 5000 if PORT is not set
-    app.run(host='0.0.0.0', port=port)
+# Application Context for DB Initialization
+if __name__ == "__main__":
+    with app.app_context():  # Ensure application context is pushed
+        db.create_all()  # Create tables if they don't exist
+    app.run(debug=True)

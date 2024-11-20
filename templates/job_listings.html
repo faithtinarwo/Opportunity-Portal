@@ -16,7 +16,6 @@
                 <a href="/add_job_listing">Add Job Listing</a>
                 <a href="/job_listings">Job Listings</a>
                 <a href="/candidates">Candidates</a>
-                <a href="/applications">Applications</a>
                 <a href="/status_updates">Status Updates</a>
             </div>
         </nav>
@@ -30,30 +29,10 @@
                 <div class="job-listing">
                     <h3>{{ listing.title }}</h3>
                     <p>{{ listing.description }}</p>
-                    <p>Expires in: <span id="timer-{{ listing.id }}"></span></p>
                     <form action="{{ url_for('delete_job_listing', id=listing.id) }}" method="post">
                         <button type="submit">Delete Listing</button>
                     </form>
                 </div>
-                <script>
-                    // Countdown timer script
-                    const expirationDate = new Date("{{ listing.expiration_date.strftime('%Y-%m-%d %H:%M:%S') }}").getTime();
-                    const timerElement = document.getElementById("timer-{{ listing.id }}");
-
-                    setInterval(() => {
-                        const now = new Date().getTime();
-                        const timeLeft = expirationDate - now;
-
-                        if (timeLeft < 0) {
-                            timerElement.innerHTML = "Expired";
-                        } else {
-                            const days = Math.floor(timeLeft / (1000 * 60 * 60 * 24));
-                            const hours = Math.floor((timeLeft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                            const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
-                            timerElement.innerHTML = `${days}d ${hours}h ${minutes}m`;
-                        }
-                    }, 1000);
-                </script>
                 {% endfor %}
             </ul>
         {% else %}

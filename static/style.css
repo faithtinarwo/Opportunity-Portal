@@ -69,6 +69,7 @@ nav a:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%; /* Ensure it spans the full width */
 }
 
 .hero-image {
@@ -79,11 +80,17 @@ nav a:hover {
 
 .hero-text {
     max-width: 40%;
+    text-align: left; /* Align text to the left */
 }
 
 .hero-text h2 {
     font-size: 2.5rem;
     margin-bottom: 20px;
+}
+
+/* Reverse the order of elements for the hero section */
+.hero .container {
+    flex-direction: row-reverse; /* Place image on the right and text on the left */
 }
 
 .cta-button {
@@ -174,4 +181,3 @@ footer a {
 footer a:hover {
     text-decoration: underline;
 }
-
