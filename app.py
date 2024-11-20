@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-
+import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jobs.db'  # Change this to MySQL or PostgreSQL as needed
@@ -125,8 +125,9 @@ def status_updates():
     return render_template('status_updates.html', status_updates=status_updates)
 
 
-# Application Context for DB Initialization
+
+
 if __name__ == "__main__":
-    with app.app_context():  # Ensure application context is pushed
-        db.create_all()  # Create tables if they don't exist
-    app.run(host="0.0.0.0", port=5000, debug=True)  # Bind to 0.0.0.0
+    port = int(os.environ.get("PORT", 5000))  # Use PORT from environment or default to 5000
+    app.run(host="0.0.0.0", port=port, debug=True)  # Bind to 0.0.0.0
+
