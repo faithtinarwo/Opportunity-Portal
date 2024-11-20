@@ -79,7 +79,7 @@ def add_job_listing():
         description = request.form.get('description')
         employer_id = request.form.get('employer_id')  # Get the employer_id from the form
 
-        # Example validation logic (make sure all fields are provided)
+        # validation logic 
         if title and description and employer_id:
             employer = Employer.query.get(employer_id)  # Fetch employer by ID
             if employer:
@@ -105,7 +105,7 @@ def delete_job_listing(id):
     if job_listing:
         db.session.delete(job_listing)
         db.session.commit()
-        return redirect(url_for('job_listings'))  # Redirect to the job listings page
+        return redirect(url_for('job_listings'))  
     return "Job listing not found", 404
 
 @app.route('/candidates')
@@ -113,7 +113,6 @@ def candidates():
     candidates = Candidate.query.all()
     return render_template('candidates.html', candidates=candidates)
 
-# Route for viewing job listings
 @app.route('/job_listings')
 def job_listings():
     listings = JobListing.query.all()
@@ -124,10 +123,7 @@ def status_updates():
     status_updates = StatusUpdate.query.all()
     return render_template('status_updates.html', status_updates=status_updates)
 
-
-
-
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Use PORT from environment or default to 5000
+    port = int(os.environ.get("PORT", 5000))  # Use PORT from environment 
     app.run(host="0.0.0.0", port=port, debug=True)  # Bind to 0.0.0.0
 
