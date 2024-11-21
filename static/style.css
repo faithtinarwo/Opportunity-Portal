@@ -108,6 +108,30 @@ nav a:hover {
     background-color: #1abc9c;
 }
 
+#job-search .search-inputs {
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0;
+}
+
+#job-search input, #job-search select {
+    width: 30%;
+    padding: 10px;
+    margin-right: 10px;
+}
+
+#job-search button {
+    padding: 15px 30px;
+    background-color: #1abc9c;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+#job-search button:hover {
+    background-color: #1abc9c;
+
+
 /* Sections */
 section {
     margin: 40px 0;

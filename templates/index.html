@@ -34,6 +34,25 @@
         </div>
     </section>
 
+    <!-- Job Search Section -->
+    <section id="job-search" class="container">
+        <h2>Search for Jobs</h2>
+        <form action="/job_listings" method="GET">
+            <div class="search-inputs">
+                <input type="text" name="title" placeholder="Job Title" value="{{ request.args.get('title') }}">
+                <select name="category">
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="IT" {% if request.args.get('category') == 'IT' %}selected{% endif %}>IT</option>
+                    <option value="Marketing" {% if request.args.get('category') == 'Marketing' %}selected{% endif %}>Marketing</option>
+                    <option value="Finance" {% if request.args.get('category') == 'Finance' %}selected{% endif %}>Finance</option>
+                    <option value="HR" {% if request.args.get('category') == 'HR' %}selected{% endif %}>HR</option>
+                    
+                </select>
+                <button type="submit" class="cta-button">Search</button>
+            </div>
+        </form>
+    </section>
+
     <!-- Main Content Section -->
     <main>
         <!-- About Section -->

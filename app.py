@@ -115,7 +115,19 @@ def candidates():
 
 @app.route('/job_listings')
 def job_listings():
-    listings = JobListing.query.all()
+    title = request.args.get('title')
+    category = request.args.get('category')
+
+    # Filter job listings based on the search criteria
+    query = JobListing.query
+
+    if title:
+        query = query.filter(JobListing.title.like(f"%{title}%"))
+    if category:
+        query = query.filter(JobListing.category == category)  # Assuming `category` is a column in your JobListing model
+
+    listings = query.all()
+
     return render_template('job_listings.html', listings=listings)
 
 @app.route('/status_updates')
