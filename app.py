@@ -26,6 +26,7 @@ class JobListing(db.Model):
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=False)
     employer_id = db.Column(db.Integer, db.ForeignKey('employer.id'), nullable=False)
+    category = db.Column(db.String(100), nullable=False)
 
     employer = db.relationship('Employer', backref=db.backref('job_listings', lazy=True))
 
