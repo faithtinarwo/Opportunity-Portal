@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import os
 from dotenv import load_dotenv
-from datetime import datetime  # Added import
+from datetime import datetime
 
 # Load environment variables from .env file
 load_dotenv()
@@ -29,7 +29,6 @@ class Employer(db.Model):
     def __repr__(self):
         return f"<Employer {self.name}>"
 
-
 class JobListing(db.Model):
     __tablename__ = 'job_listing'
     id = db.Column(db.Integer, primary_key=True)
@@ -42,7 +41,6 @@ class JobListing(db.Model):
 
     def __repr__(self):
         return f"<JobListing {self.title}>"
-
 
 class Candidate(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -57,18 +55,15 @@ class Candidate(db.Model):
 
 class JobStatusUpdate(db.Model):
     __tablename__ = 'job_status_updates'
-
     status_update_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    job_id = db.Column(db.Integer, db.ForeignKey('job_listing.id'), nullable=False)  # Add ForeignKey here
+    job_id = db.Column(db.Integer, db.ForeignKey('job_listing.id'), nullable=False)
     status = db.Column(db.String(50), nullable=True)
     update_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    # Define the relationship
     job_listing = db.relationship('JobListing', backref=db.backref('status_updates', lazy=True))
 
     def __repr__(self):
         return f"<JobStatusUpdate {self.status_update_id}, Status {self.status}>"
-
 
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -93,7 +88,6 @@ def add_employer():
         employer_name = request.form['employer_name']
         employer_email = request.form['employer_email']
 
-        # Check for email duplication
         if Employer.query.filter_by(email=employer_email).first():
             flash('Employer with this email already exists.', 'error')
         elif not employer_name or not employer_email:
@@ -165,7 +159,7 @@ def candidates():
 
 @app.route('/status_updates')
 def status_updates():
-    updates = JobStatusUpdate.query.all()  # Corrected this line
+    updates = JobStatusUpdate.query.all()
     return render_template('status_updates.html', status_updates=updates)
 
 @app.route('/applications')
@@ -173,9 +167,7 @@ def applications():
     applications = Application.query.all()
     return render_template('applications.html', applications=applications)
 
+
 if __name__ == "__main__":
-    app.run(debug=True)
-=======
-    port = int(os.environ.get("PORT", 5000))  # Use PORT from environment 
-    app.run(host="0.0.0.0", port=port, debug=True)  # Bind to 0.0.0.0
->>>>>>> ef0e7a70e4e28fee6bb664abcc7563f8e0897fdf
+    port = int(os.environ.get("PORT", 5001))
+    app.run(host="0.0.0.0", port=port, debug=True)
