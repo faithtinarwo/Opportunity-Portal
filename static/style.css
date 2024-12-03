@@ -1,140 +1,16 @@
 /* General Styles */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
-}
-
-.header-content {
+    background-color: #f4f7fb;
     display: flex;
-    align-items: center;
-    padding: 10px;
-    background-color: #35424a;
-    color: white;
+    flex-direction: column;
+    min-height: 100vh; /* Ensures the body takes up the full height of the viewport */
 }
 
-/* Navbar Styles */
-nav {
-    background-color: #1f2a38;
-    display: flex;
-    align-items: center; /* Center items vertically */
-    padding: 10px 20px; /* Padding around the nav */
-} 
-
-h1{
-    color: #ffffff;
-}
-
-nav .logo {
-    width: 60px; /* Adjust as needed */
-    margin-right: 15px;
-}
-
-nav .nav-links {
-    margin-left: auto; /* Push nav links to the right */
-    display: flex; /* Ensure the links are displayed in a row */
-}
-
-nav a {
-    color: #ffffff;
-    text-decoration: none;
-    padding: 10px 15px;
-    margin: 0 5px;
-}
-
-nav a:hover {
-    background-color: #1abc9c;
-    border-radius: 4px;
-}
-
-/* General container styles */
-.container {
-    width: 80%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-}
-
-/* Hero section */
-.hero {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f4f4f4;
-    padding: 60px 0;
-}
-
-.hero .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%; /* Ensure it spans the full width */
-}
-
-.hero-image {
-    max-width: 50%;
-    height: auto;
-    border-radius: 8px;
-}
-
-.hero-text {
-    max-width: 40%;
-    text-align: left; /* Align text to the left */
-}
-
-.hero-text h2 {
-    font-size: 2.5rem;
-    margin-bottom: 20px;
-}
-
-/* Reverse the order of elements for the hero section */
-.hero .container {
-    flex-direction: row-reverse; /* Place image on the right and text on the left */
-}
-
-.cta-button {
-    display: inline-block;
-    background-color: #1abc9c;
-    color: #fff;
-    padding: 15px 30px;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 1rem;
-    margin-top: 20px;
-}
-
-.cta-button:hover {
-    background-color: #1abc9c;
-}
-
-#job-search .search-inputs {
-    display: flex;
-    justify-content: space-between;
-    margin: 15px 0;
-}
-
-#job-search input, #job-search select {
-    width: 30%;
-    padding: 10px;
-    margin-right: 10px;
-}
-
-#job-search button {
-    padding: 15px 30px;
-    background-color: #1abc9c;
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-#job-search button:hover {
-    background-color: #1abc9c;
-}
-
-/* Sections */
-section {
-    margin: 40px 0;
+h1, h2 {
+    font-weight: 600;
 }
 
 h2 {
@@ -143,6 +19,153 @@ h2 {
     margin-bottom: 20px;
 }
 
+/* Header */
+.header-content {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background-color: #35424a;
+    color: white;
+}
+
+h1 {
+    color: #ffffff;
+    font-size: 2rem;
+}
+
+/* Navbar Styles */
+nav {
+    background-color: #1f2a38;
+    display: flex;
+    justify-content: space-between; /* Space between logo and nav links */
+    align-items: center;
+    padding: 15px 30px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+nav .logo {
+    width: 60px;
+    margin-right: 20px;
+}
+
+nav .nav-links {
+    display: flex;
+    gap: 15px;
+}
+
+nav a {
+    color: #ffffff;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+nav a:hover {
+    background-color: #1abc9c;
+}
+
+/* Hero Section */
+.hero {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f4f4f4;
+    padding: 80px 0;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.hero .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.hero-text {
+    max-width: 45%;
+    text-align: left;
+    padding: 20px;
+}
+
+.hero-text h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.hero-image {
+    max-width: 50%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Call to Action Button */
+.cta-button {
+    display: inline-block;
+    background-color: #1abc9c;
+    color: #fff;
+    padding: 15px 30px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    margin-top: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.cta-button:hover {
+    background-color: #16a085;
+}
+
+/* Job Search */
+#job-search .search-inputs {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+#job-search input, #job-search select {
+    width: 30%;
+    padding: 12px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+#job-search button {
+    padding: 12px 25px;
+    background-color: #1abc9c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#job-search button:hover {
+    background-color: #16a085;
+}
+
+/* General Container */
+.container {
+    width: 80%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Sections */
+section {
+    margin: 40px 0;
+}
+
+/* List Styles */
 ul {
     list-style-type: none;
     padding: 0;
@@ -150,7 +173,8 @@ ul {
 
 ul li {
     font-size: 1.2rem;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    color: #555;
 }
 
 /* Testimonials */
@@ -165,43 +189,49 @@ blockquote cite {
     font-weight: bold;
 }
 
-/* Reset some default browser styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-/* Set up the basic layout */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* Ensures the body takes up the full height of the viewport */
-}
-
-/* Main content area */
-main {
-    flex-grow: 1; /* Takes up available space, pushing footer to the bottom */
-}
-
-/* Style the footer */
+/* Footer */
 footer {
     background-color: #333;
     color: white;
     text-align: center;
-    padding: 20px;
-    margin-top: auto; /* This ensures the footer is pushed to the bottom of the page */
+    padding: 25px;
+    margin-top: auto;
     width: 100%;
 }
 
-/* Styling for footer links */
 footer a {
     color: #fff;
     text-decoration: none;
+    font-weight: bold;
+    transition: text-decoration 0.3s ease;
 }
 
 footer a:hover {
     text-decoration: underline;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .hero .container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .hero-image {
+        max-width: 80%;
+        margin: 20px 0;
+    }
+
+    #job-search .search-inputs {
+        flex-direction: column;
+    }
+
+    #job-search input, #job-search select {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .cta-button {
+        padding: 12px 25px;
+    }
 }

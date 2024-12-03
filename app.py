@@ -37,7 +37,6 @@ class JobListing(db.Model):
     description = db.Column(db.Text, nullable=False)
     category = db.Column(db.String(100), nullable=False)
     employer_id = db.Column(db.Integer, db.ForeignKey('employer.id'), nullable=False)
-    category = db.Column(db.String(100), nullable=False)
 
     employer = db.relationship('Employer', backref=db.backref('job_listings', lazy=True))
 
@@ -60,9 +59,16 @@ class JobStatusUpdate(db.Model):
     __tablename__ = 'job_status_updates'
 
     status_update_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    job_id = db.Column(db.Integer, db.ForeignKey('job_listings.id'), nullable=True)
+    job_id = db.Column(db.Integer, db.ForeignKey('job_listing.id'), nullable=False)  # Add ForeignKey here
     status = db.Column(db.String(50), nullable=True)
     update_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Define the relationship
+    job_listing = db.relationship('JobListing', backref=db.backref('status_updates', lazy=True))
+
+    def __repr__(self):
+        return f"<JobStatusUpdate {self.status_update_id}, Status {self.status}>"
+
 
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -168,9 +174,4 @@ def applications():
     return render_template('applications.html', applications=applications)
 
 if __name__ == "__main__":
-<<<<<<< HEAD
     app.run(debug=True)
-=======
-    port = int(os.environ.get("PORT", 5000))  # Use PORT from environment 
-    app.run(host="0.0.0.0", port=port, debug=True)  # Bind to 0.0.0.0
->>>>>>> ef0e7a70e4e28fee6bb664abcc7563f8e0897fdf
