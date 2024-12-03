@@ -37,6 +37,7 @@ class JobListing(db.Model):
     description = db.Column(db.Text, nullable=False)
     category = db.Column(db.String(100), nullable=False)
     employer_id = db.Column(db.Integer, db.ForeignKey('employer.id'), nullable=False)
+    category = db.Column(db.String(100), nullable=False)
 
     employer = db.relationship('Employer', backref=db.backref('job_listings', lazy=True))
 
@@ -167,4 +168,9 @@ def applications():
     return render_template('applications.html', applications=applications)
 
 if __name__ == "__main__":
+<<<<<<< HEAD
     app.run(debug=True)
+=======
+    port = int(os.environ.get("PORT", 5000))  # Use PORT from environment 
+    app.run(host="0.0.0.0", port=port, debug=True)  # Bind to 0.0.0.0
+>>>>>>> ef0e7a70e4e28fee6bb664abcc7563f8e0897fdf
