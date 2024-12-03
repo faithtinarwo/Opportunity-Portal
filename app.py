@@ -2,47 +2,78 @@ from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import os
+from dotenv import load_dotenv
+from datetime import datetime  # Added import
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///jobs.db'  # Change this to MySQL or PostgreSQL as needed
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
 
+# Configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')  # Use environment variable for DB URI
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.secret_key = os.getenv("FLASK_SECRET_KEY")  # Use environment variable for secret key
+
+# Initialize database and migrations
+db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 # Models
 class Employer(db.Model):
+    __tablename__ = 'employer'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), nullable=True)
+    email = db.Column(db.String(100), nullable=True, unique=True)
 
     def __repr__(self):
         return f"<Employer {self.name}>"
 
-from datetime import datetime
 
 class JobListing(db.Model):
+    __tablename__ = 'job_listing'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=False)
+    category = db.Column(db.String(100), nullable=False)
     employer_id = db.Column(db.Integer, db.ForeignKey('employer.id'), nullable=False)
 
     employer = db.relationship('Employer', backref=db.backref('job_listings', lazy=True))
 
     def __repr__(self):
-        return f'<JobListing {self.title}>'
+        return f"<JobListing {self.title}>"
+
 
 class Candidate(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    resume = db.Column(db.String(100), nullable=False)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(255), nullable=False)
+    skills = db.Column(db.Text, nullable=True)
+    resume_link = db.Column(db.String(255), nullable=True)
+    experience = db.Column(db.Text, nullable=True)
+    job_preferences = db.Column(db.Text, nullable=True)
 
-class StatusUpdate(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    status = db.Column(db.String(100), nullable=False)
+    def __repr__(self):
+        return f"<Candidate {self.name}>"
+
+class JobStatusUpdate(db.Model):
+    __tablename__ = 'job_status_updates'
+
+    status_update_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    job_id = db.Column(db.Integer, db.ForeignKey('job_listings.id'), nullable=True)
+    status = db.Column(db.String(50), nullable=True)
+    update_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+class Application(db.Model):
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    candidate_id = db.Column(db.Integer, db.ForeignKey('candidate.id'), nullable=False)
     job_listing_id = db.Column(db.Integer, db.ForeignKey('job_listing.id'), nullable=False)
-    job_listing = db.relationship('JobListing', backref='status_updates')
+    status = db.Column(db.String(50), nullable=False)
 
+    candidate = db.relationship('Candidate', backref=db.backref('applications', lazy=True))
+    job_listing = db.relationship('JobListing', backref=db.backref('applications', lazy=True))
+
+    def __repr__(self):
+        return f"<Application {self.id}, Candidate {self.candidate_id}, JobListing {self.job_listing_id}>"
 
 # Routes
 @app.route('/')
@@ -55,49 +86,59 @@ def add_employer():
         employer_name = request.form['employer_name']
         employer_email = request.form['employer_email']
 
-        # Check if the employer already exists in the database
-        existing_employer = Employer.query.filter_by(email=employer_email).first()
-        if existing_employer:
-            flash('Employer with this email already exists', 'error')
-            return redirect(url_for('add_employer'))
+        # Check for email duplication
+        if Employer.query.filter_by(email=employer_email).first():
+            flash('Employer with this email already exists.', 'error')
+        elif not employer_name or not employer_email:
+            flash('Please fill in all fields.', 'error')
+        else:
+            new_employer = Employer(name=employer_name, email=employer_email)
+            db.session.add(new_employer)
+            db.session.commit()
+            flash('Employer added successfully!', 'success')
 
-        # Create and add the new employer
-        new_employer = Employer(name=employer_name, email=employer_email)
-        db.session.add(new_employer)
-        db.session.commit()
-
-        flash('Employer added successfully', 'success')
-        return redirect(url_for('add_job_listing'))  # Redirect to add job listing page
+        return redirect(url_for('add_employer'))
 
     return render_template('add_employer.html')
-
 
 @app.route('/add_job_listing', methods=['GET', 'POST'])
 def add_job_listing():
     if request.method == 'POST':
-        title = request.form.get('title')
-        description = request.form.get('description')
-        employer_id = request.form.get('employer_id')  # Get the employer_id from the form
+        title = request.form['title']
+        description = request.form['description']
+        category = request.form['category']
+        employer_id = request.form['employer_id']
 
-        # validation logic 
-        if title and description and employer_id:
-            employer = Employer.query.get(employer_id)  # Fetch employer by ID
+        if title and description and category and employer_id:
+            employer = Employer.query.get(employer_id)
             if employer:
-                new_job = JobListing(title=title, description=description, employer_id=employer.id)
+                new_job = JobListing(title=title, description=description, category=category, employer_id=employer.id)
                 db.session.add(new_job)
                 db.session.commit()
-                message = "Job listing added successfully!"
+                flash('Job listing added successfully!', 'success')
             else:
-                message = "Employer not found."
+                flash('Employer not found.', 'error')
         else:
-            message = "Please fill in all fields."
+            flash('Please fill in all fields.', 'error')
 
-        return render_template('add_job_listing.html', message=message)
+        return redirect(url_for('add_job_listing'))
 
-    # Retrieve all employers to show in the dropdown
     employers = Employer.query.all()
     return render_template('add_job_listing.html', employers=employers)
 
+@app.route('/job_listings', methods=['GET'])
+def job_listings():
+    title = request.args.get('title')
+    category = request.args.get('category')
+
+    query = JobListing.query
+    if title:
+        query = query.filter(JobListing.title.like(f"%{title}%"))
+    if category:
+        query = query.filter(JobListing.category == category)
+
+    listings = query.all()
+    return render_template('job_listings.html', listings=listings)
 
 @app.route('/delete_job_listing/<int:id>', methods=['POST'])
 def delete_job_listing(id):
@@ -105,36 +146,25 @@ def delete_job_listing(id):
     if job_listing:
         db.session.delete(job_listing)
         db.session.commit()
-        return redirect(url_for('job_listings'))  
-    return "Job listing not found", 404
+        flash('Job listing deleted successfully!', 'success')
+        return redirect(url_for('job_listings'))
+    flash('Job listing not found.', 'error')
+    return redirect(url_for('job_listings'))
 
 @app.route('/candidates')
 def candidates():
     candidates = Candidate.query.all()
     return render_template('candidates.html', candidates=candidates)
 
-@app.route('/job_listings')
-def job_listings():
-    title = request.args.get('title')
-    category = request.args.get('category')
-
-    # Filter job listings based on the search criteria
-    query = JobListing.query
-
-    if title:
-        query = query.filter(JobListing.title.like(f"%{title}%"))
-    if category:
-        query = query.filter(JobListing.category == category)  # Assuming `category` is a column in your JobListing model
-
-    listings = query.all()
-
-    return render_template('job_listings.html', listings=listings)
-
 @app.route('/status_updates')
 def status_updates():
-    status_updates = StatusUpdate.query.all()
-    return render_template('status_updates.html', status_updates=status_updates)
+    updates = JobStatusUpdate.query.all()  # Corrected this line
+    return render_template('status_updates.html', status_updates=updates)
+
+@app.route('/applications')
+def applications():
+    applications = Application.query.all()
+    return render_template('applications.html', applications=applications)
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Use PORT from environment 
-    app.run(host="0.0.0.0", port=port, debug=True)  # Bind to 0.0.0.0
+    app.run(debug=True)
