@@ -116,9 +116,10 @@ def downgrade():
     mysql_collate='utf8mb4_0900_ai_ci',
     mysql_default_charset='utf8mb4',
     mysql_engine='InnoDB'
-    )
-    op.drop_table('status_update')
-    op.drop_table('job_listing')
-    op.drop_table('employer')
-    op.drop_table('candidates')
+)
+    # Drop existing tables if they exist
+    op.drop_table('status_update', if_exists=True)
+    op.drop_table('job_listing', if_exists=True)
+    op.drop_table('employer', if_exists=True)
+    op.drop_table('candidates', if_exists=True)
     # ### end Alembic commands ###

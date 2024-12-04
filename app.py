@@ -66,16 +66,18 @@ class JobStatusUpdate(db.Model):
         return f"<JobStatusUpdate {self.status_update_id}, Status {self.status}>"
 
 class Application(db.Model):
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    application_id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # Changed to application_id
     candidate_id = db.Column(db.Integer, db.ForeignKey('candidate.id'), nullable=False)
-    job_listing_id = db.Column(db.Integer, db.ForeignKey('job_listing.id'), nullable=False)
+    job_id = db.Column(db.Integer, db.ForeignKey('job_listing.id'), nullable=False)  # Changed to job_id
     status = db.Column(db.String(50), nullable=False)
+    application_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     candidate = db.relationship('Candidate', backref=db.backref('applications', lazy=True))
     job_listing = db.relationship('JobListing', backref=db.backref('applications', lazy=True))
 
     def __repr__(self):
-        return f"<Application {self.id}, Candidate {self.candidate_id}, JobListing {self.job_listing_id}>"
+        return f"<Application {self.application_id}, Candidate {self.candidate_id}, JobListing {self.job_id}>"
+
 
 # Routes
 @app.route('/')
