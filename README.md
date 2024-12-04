@@ -10,11 +10,9 @@ Candidate Profiles: Candidates can create profiles, upload their resumes, and ap
 Applications: Candidates can apply for job listings, and employers can track these applications.
 Job Status Updates: Employers can update the job status (e.g., hired, interviewed, rejected) for each job listing.
 Technologies Used
-Flask: Web framework for building the backend.
-SQLAlchemy: ORM (Object Relational Mapper) for interacting with the database.
+Flask: Web framework for building the backend..
 MySQL: Database for storing the application data.
-HTML, CSS, Bootstrap: Frontend technologies for rendering the web pages.
-Jinja2: Templating engine for dynamic content rendering.
+HTML, CSS: Frontend technologies for rendering the web pages.
 
 You can access the deployed Opportunity Portal at the following link:
 
