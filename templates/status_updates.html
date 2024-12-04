@@ -16,6 +16,7 @@
                 <a href="/add_job_listing">Add Job Listing</a>
                 <a href="/job_listings">Job Listings</a>
                 <a href="/candidates">Candidates</a>
+                <a href="/applications">Applications</a>
                 <a href="/status_updates">Status Updates</a>
             </div>
         </nav>
@@ -23,7 +24,18 @@
 
     <main>
         <h2>Status Updates</h2>
-        <p>No status updates available at this time.</p> <!-- Placeholder content -->
+        <ul>
+            <!-- Loop through status updates -->
+            {% for update in status_updates %}
+                <li>
+                    Job: {{ update.job_title }}<br>
+                    Candidate: {{ update.candidate_name }}<br>
+                    Status: {{ update.status }}
+                </li>
+            {% else %}
+                <p>No status updates available.</p>
+            {% endfor %}
+        </ul>
     </main>
 
     <footer>

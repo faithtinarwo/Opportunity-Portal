@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Job Listing</title>
+    <title>Applications</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <header>
         <nav>
-            
             <h1>Opportunity Portal</h1>
             <div class="nav-links">
                 <a href="/">Home</a>
@@ -24,24 +23,21 @@
     </header>
 
     <main>
-        <h2>Add Job Listing</h2>
-        <form method="POST">
-            <label for="title">Job Title</label>
-            <input type="text" id="title" name="title" required>
-        
-            <label for="description">Job Description</label>
-            <textarea id="description" name="description" required></textarea>
-        
-            <label for="employer_id">Select Employer</label>
-            <select id="employer_id" name="employer_id" required>
-                {% for employer in employers %}
-                    <option value="{{ employer.id }}">{{ employer.name }}</option>
-                {% endfor %}
-            </select>
-        
-            <button type="submit">Add Job Listing</button>
-        </form>
-        
+        <h2>Application List</h2>
+        <ul>
+            <!-- Loop through applications -->
+            {% for application in applications %}
+                <li>
+                    Candidate: {{ application.candidate_name }}<br>
+                    Job: {{ application.job_title }}<br>
+                    Status: {{ application.status }}
+                </li>
+            {% else %}
+                <p>No applications found.</p>
+            {% endfor %}
+        </ul>
+
+        <a href="/status_updates" class="button">View Status Updates</a>
     </main>
 
     <footer>
