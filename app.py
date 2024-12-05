@@ -11,9 +11,12 @@ load_dotenv()
 app = Flask(__name__)
 
 # Configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')  # Use environment variable for DB URI
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    f"mysql+pymysql://{os.getenv('DATABASE_USER')}:{os.getenv('DATABASE_PASSWORD')}"
+    f"@{os.getenv('DATABASE_HOST')}:{os.getenv('DATABASE_PORT')}/{os.getenv('DATABASE_NAME')}"
+)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.secret_key = os.getenv("FLASK_SECRET_KEY")  # Use environment variable for secret key
+app.secret_key = os.getenv("SECRET_KEY")  # Use environment variable for secret key
 
 # Initialize database and migrations
 db = SQLAlchemy(app)
@@ -66,9 +69,9 @@ class JobStatusUpdate(db.Model):
         return f"<JobStatusUpdate {self.status_update_id}, Status {self.status}>"
 
 class Application(db.Model):
-    application_id = db.Column(db.Integer, primary_key=True, autoincrement=True)  # Changed to application_id
+    application_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     candidate_id = db.Column(db.Integer, db.ForeignKey('candidate.id'), nullable=False)
-    job_id = db.Column(db.Integer, db.ForeignKey('job_listing.id'), nullable=False)  # Changed to job_id
+    job_id = db.Column(db.Integer, db.ForeignKey('job_listing.id'), nullable=False)
     status = db.Column(db.String(50), nullable=False)
     application_date = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -77,7 +80,6 @@ class Application(db.Model):
 
     def __repr__(self):
         return f"<Application {self.application_id}, Candidate {self.candidate_id}, JobListing {self.job_id}>"
-
 
 # Routes
 @app.route('/')
@@ -168,7 +170,6 @@ def status_updates():
 def applications():
     applications = Application.query.all()
     return render_template('applications.html', applications=applications)
-
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5001))
