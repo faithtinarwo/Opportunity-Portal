@@ -15,6 +15,4 @@ Flask: Web framework for building the backend..
 MySQL: Database for storing the application data.
 HTML, CSS: Frontend technologies for rendering the web pages.
 
-You can access the deployed Opportunity Portal at the following link:
 
-(https://opportunity-portal-iaza.onrender.com/)
